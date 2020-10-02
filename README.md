@@ -59,4 +59,4 @@ const { pause } = require('pause-repl');
 
 ### Screenshot
 
-![Screenshot showing REPL output](/screenshot.jpg?raw=true 'Screenshot showing REPL output')
+![Screenshot showing REPL output](/screenshot.png?raw=true 'Screenshot showing REPL output')
