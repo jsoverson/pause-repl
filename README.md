@@ -1,61 +1,62 @@
-# Typescript boilerplate
+# pause-repl
 
-This is a boilerplate typescript project that incorporates fixes and best practices I come across as I build new projects.
+Function that opens a node.js REPL and returns a promise that resolves only when `unpause()` is called in the REPL.
 
-If you extend this via a fork or otherwise, please let me know so I can check out your changes!
+When you `await` for this function to return, it will pause a script and open an interactive session.
 
-## Who is this for?
+## Installation
 
-Anyone who uses TypeScript with Visual Studio Code and writes tests with Mocha.
+```shell
+$ npm install pause-repl
+```
 
-## Features
+## Usage
 
-- Build and watch with tolerable TS presets.
-- Testing with mocha & chai.
-- @types definitions for mocha, chai, node, and other dependencies included.
-- Local HTTP test server preconfigured in tests.
-- Visual Studio Code project settigns preconfigured for
-  - Test Explorer UI recognizing Typescript tests
-  - Debugging Typescript tests within the IDE
-- Adds `__projectroot` as an alternative to `__dirname` to avoid lookup problems from compiled files.
-- Configuration and rc files:
-  - One configuration location for mocha, prettier, eslint & typescript so CLI programs and IDEs/extensions reuse configuration.
-  - Config files whose path can be configured from a central location have been moved to `etc/`
-  - Minimal .gitignore
+Import the `pause` function from `pause-repl`.
 
-## Core npm scripts
+```js
+const { pause } = require('pause-repl');
+```
 
-- `build`: build typescript
-- `compile`: clean & build
-- `clean`: remove build folder
-- `prepublishOnly`: compile
-- `format`: format source files inline with prettier
-- `watch`: clean && continuously build files on change
-- `lint`: lint src && test
-- `test:unit`: mocha tests
-- `test`: lint && test:unit
+`await pause()` from an `async` function to open a REPL.
 
-## Visual Studio Code extensions
+```js
+await pause();
+```
 
-### Testing and debugging
+Pass any object to `pause()` to expose its properties to the REPL.
 
-Debugging within Visual Studio Code requires
+```js
+await pause({ hello: 'world' });
+```
 
-- [Test Explorer UI](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer)
-- [Mocha Test Explorer](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-mocha-test-adapter)
+While `pause()` returns a promise and is intended to be used in an `async/await` context but it can be used like any other promise. The `unpause()` function is attached to the promise so you can unpause programmatically, like in a timeout or when another action completes.
 
-`.vscode/settings.json` is set up to parse Typescript files and to wire Mocha Test Explorer to the appropriate launch configuration in `.vscode/launch.json`. This wiring depends on the name of the launch configuration, do not change!
+```js
+const pausedRepl = await pause();
+pausedRepl.then(() => {
+  console.log('unpaused');
+});
+pausedRepl.unpause();
+```
 
-### Recommended plugins
+## Example
 
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+```js
+const { pause } = require('pause-repl');
 
-The ESLint plugin is preconfigured for typescript in `.vscode/settings.json`.
+(async () => {
+  const replContext = {
+    greet: () => 'Hello you!', // greet() will be availble in the REPL
+  };
 
-### Additional Configuration
+  await pause(replContext);
 
-Additional settings in `.vscode/settings.json`
+  // the script won't continue until unpaused()-ed from the REPL.
+  console.log('Done');
+})();
+```
 
-- `editor.formatOnSave : true` to keep manual autoformatting to a minimum
-- `debug.javascript.usePreview : false` to address debugging issues from [microsoft/vscode#102834](https://github.com/microsoft/vscode/issues/102834). This should be removed eventually.
+### Screenshot
+
+![Screenshot showing REPL output](/screenshot.jpg?raw=true 'Screenshot showing REPL output')

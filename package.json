@@ -1,7 +1,7 @@
 {
-  "name": "",
+  "name": "pause-repl",
   "version": "0.0.0",
-  "description": "",
+  "description": "pause function that opens a REPL ",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
@@ -22,11 +22,16 @@
   "eslintConfig": {
     "extends": "./etc/.eslintrc.json"
   },
-  "keywords": [],
+  "keywords": [
+    "pause",
+    "repl",
+    "async pause",
+    "interactive",
+    "debug"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@jsoverson/test-server": "^1.2.0",
     "@types/chai": "^4.2.12",
     "@types/find-root": "^1.1.2",
     "@types/mocha": "^8.0.3",
@@ -41,7 +46,5 @@
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
   },
-  "dependencies": {
-    "find-root": "^1.1.0"
-  }
+  "dependencies": {}
 }

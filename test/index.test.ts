@@ -1,31 +1,68 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
-import { start, TestServer } from '@jsoverson/test-server';
+import { pause } from '../src/index';
 
-import * as index from '../src';
-
-describe('main', function () {
-  // Setup and teardown for a local HTTP server.
-  // Remove this section if you don't need to make HTTP requests.
-  // More info: https://github.com/jsoverson/test-server
-
-  /******************************
-   *   HTTP test server setup   *
-   ******************************/
-  let server: TestServer;
-
-  before(async () => {
-    server = await start(__dirname, 'server_root');
+describe('pause', async function () {
+  it('should open a repl and return a promise that is resolved with an `unpause()` method', async () => {
+    let finished = false,
+      replClosed = false;
+    const replPromise = pause({ test: 'test' });
+    expect(finished).to.be.false;
+    expect(replClosed).to.be.false;
+    replPromise.then(() => {
+      finished = true;
+    });
+    const repl = replPromise.repl;
+    repl.on('exit', () => {
+      replClosed = true;
+    });
+    repl.write('unpause()\n');
+    await replPromise;
+    expect(finished).to.be.true;
+    expect(replClosed).to.be.true;
   });
 
-  after(async () => {
-    await server.stop();
-  });
-  /******************************
-   * End HTTP test server setup *
-   ******************************/
+  it('should return a working unpause method attached to the promise', async () => {
+    let finished = false,
+      replClosed = false;
+    const replPromise = pause({ test: 'test' });
+    expect(finished).to.be.false;
+    expect(replClosed).to.be.false;
+    replPromise.then(() => {
+      finished = true;
+    });
+    const repl = replPromise.repl;
+    repl.on('exit', () => {
+      replClosed = true;
+    });
 
-  it('TODO REMOVE ME', () => {
-    expect(index.main()).to.not.equal('TODO remove stub implementation');
+    replPromise.unpause();
+    await replPromise;
+    expect(finished).to.be.true;
+    expect(replClosed).to.be.true;
+  });
+
+  it('repl should stay open until unpaused', done => {
+    let finished = false,
+      replClosed = false;
+    const replPromise = pause({ test: 'test' });
+    setTimeout(() => {
+      expect(finished).to.be.false;
+      expect(replClosed).to.be.false;
+      replPromise.then(() => {
+        finished = true;
+      });
+      const repl = replPromise.repl;
+      repl.on('exit', () => {
+        replClosed = true;
+      });
+
+      replPromise.unpause();
+      replPromise.then(() => {
+        expect(finished).to.be.true;
+        expect(replClosed).to.be.true;
+        done();
+      });
+    }, 500);
   });
 });
