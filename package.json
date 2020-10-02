@@ -1,6 +1,6 @@
 {
   "name": "pause-repl",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "pause function that opens a REPL ",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
